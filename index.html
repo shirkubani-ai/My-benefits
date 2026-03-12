@@ -22,7 +22,7 @@
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, onAuthStateChanged, signOut,
            createUserWithEmailAndPassword, signInWithEmailAndPassword,
-           GoogleAuthProvider, signInWithPopup }
+           GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -117,10 +117,21 @@
     } catch(e) { authErr.textContent = translateError(e.code); }
   };
 
+  // handle redirect result on page load
+  getRedirectResult(auth).then(result => {
+    if (result?.user) { /* onAuthStateChanged will handle */ }
+  }).catch(e => { console.log(e); });
+
   googleBtn.onclick = async () => {
     authErr.textContent = '';
-    try { await signInWithPopup(auth, googleProvider); }
-    catch(e) { authErr.textContent = translateError(e.code); }
+    try {
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      if (isSafari) {
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        await signInWithPopup(auth, googleProvider);
+      }
+    } catch(e) { authErr.textContent = translateError(e.code); }
   };
 
   document.getElementById('signout-btn').onclick = () => signOut(auth);
