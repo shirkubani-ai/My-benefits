@@ -207,7 +207,7 @@
   async function loadBenefits() {
     document.getElementById('home-spinner').classList.remove('hidden');
     try {
-      const q = query(collection(db,'benefits'),where('uid','==',currentUid),orderBy('created','desc'));
+      const q = query(collection(db,'benefits'),where('uid','==',currentUid),orderBy('expire','asc'));
       const snap = await getDocs(q);
       benefits = snap.docs.map(d=>({id:d.id,...d.data()}));
       renderHome();
