@@ -125,12 +125,7 @@
   googleBtn.onclick = async () => {
     authErr.textContent = '';
     try {
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      if (isSafari) {
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        await signInWithPopup(auth, googleProvider);
-      }
+      await signInWithRedirect(auth, googleProvider);
     } catch(e) { authErr.textContent = translateError(e.code); }
   };
 
