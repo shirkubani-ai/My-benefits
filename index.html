@@ -182,6 +182,7 @@
     document.getElementById('name-inp').value = '';
     catSelect.selectedIndex = 0;
     document.getElementById('expire-inp').value = '';
+    document.getElementById('coupon-inp').value = '';
     imgPreview.classList.add('hidden'); imgPreview.src='';
     selectedBase64=null; imgInput.value='';
   }
@@ -191,10 +192,11 @@
     const name   = document.getElementById('name-inp').value.trim();
     const cat    = catSelect.value;
     const expire = document.getElementById('expire-inp').value;
+    const coupon = document.getElementById('coupon-inp').value.trim();
     if(!name||!expire){alert('נא למלא שם ותאריך תפוגה');return;}
     saveBtn.disabled=true; saveLbl.textContent='שומר…'; saveSpin.classList.remove('hidden');
     try {
-      await addDoc(collection(db,'benefits'),{name,cat,expire,imgBase64:selectedBase64||'',uid:currentUid,created:Date.now()});
+      await addDoc(collection(db,'benefits'),{name,cat,expire,coupon,imgBase64:selectedBase64||'',uid:currentUid,created:Date.now()});
       await loadBenefits();
       showMain('home');
     } catch(err){alert('שגיאה בשמירה: '+err.message);}
@@ -302,6 +304,7 @@
           <span class="bg-indigo-50 text-indigo-700 rounded-full px-2 py-0.5 text-xs">${b.cat}</span>
           <span>תפוגה: ${dateStr}</span>
         </div>
+        ${b.coupon?`<div class="text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-1.5 font-mono tracking-wide">🎫 ${b.coupon}</div>`:''}
         <button data-id="${b.id}" class="delete-btn mt-1 text-xs text-red-400 hover:text-red-600 self-end">🗑 מחק</button>
       `;
       if(b.imgBase64) card.addEventListener('click',e=>{if(e.target.classList.contains('delete-btn'))return;openModal(b.imgBase64);});
@@ -399,6 +402,11 @@
       <div>
         <label class="text-sm font-medium text-gray-600 block mb-1">תאריך תפוגה *</label>
         <input id="expire-inp" type="date" class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"/>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 block mb-1">קוד קופון / מספר כרטיס</label>
+        <input id="coupon-inp" type="text" placeholder="לדוגמה: 1234-5678"
+          class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"/>
       </div>
       <div>
         <label class="text-sm font-medium text-gray-600 block mb-1">תמונת ברקוד / קופון</label>
